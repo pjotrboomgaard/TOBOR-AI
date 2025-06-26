@@ -23,6 +23,7 @@ from modules.module_btcontroller import start_controls
 from modules.module_discord import *
 from modules.module_llm import process_completion, raw_complete_llm
 from modules.module_tts import play_audio_chunks
+from modules.module_led_control import set_emotion
 from modules.module_messageQue import queue_message
 
 # === Constants and Globals ===
@@ -338,7 +339,7 @@ def silence_question_callback():
             # First silence - check if the last AI response mentioned another character
             # But only if multi-character conversations are enabled
             if CONFIG.get('CHARACTERS', {}).get('enable_multi_character', 'True').lower() == 'true':
-                mentioned_character = detect_character_mention_in_response(last_ai_response)
+            mentioned_character = detect_character_mention_in_response(last_ai_response)
             else:
                 mentioned_character = None
             

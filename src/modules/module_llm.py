@@ -163,9 +163,16 @@ def detect_emotion(text):
     """
     if CONFIG['EMOTION']['enabled']:
         from transformers import pipeline
+        from modules.module_led_control import set_emotion
+        
         classifier = pipeline("text-classification", model="SamLowe/roberta-base-go_emotions", top_k=None)
         model_outputs = classifier(text)
-        return max(model_outputs[0], key=lambda x: x['score'])['label']
+        detected_emotion = max(model_outputs[0], key=lambda x: x['score'])['label']
+        
+        # Set LED emotion display (this is for character emotion since it's AI response)
+        set_emotion(detected_emotion, character_emotion=True)
+        
+        return detected_emotion
     return None
 
 # === Memory Integration ===

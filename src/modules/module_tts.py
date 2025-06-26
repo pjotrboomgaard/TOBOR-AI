@@ -27,6 +27,7 @@ from modules.module_alltalk import text_to_speech_with_pipelining_alltalk
 from modules.module_elevenlabs import text_to_speech_with_pipelining_elevenlabs
 from modules.module_azure import text_to_speech_with_pipelining_azure
 from modules.module_messageQue import queue_message
+from modules.module_led_control import set_talking
 
 def update_tts_settings(ttsurl):
     """
@@ -160,12 +161,19 @@ async def play_audio_chunks(text, config, voice_config=None):
     # Skip audio playback if TTS is disabled
     if config == "none":
         return
-        
-    async for audio_chunk in generate_tts_audio(text, config, voice_config):
-        try:
-            # Read the audio chunk into a format playable by sounddevice
-            data, samplerate = sf.read(audio_chunk, dtype='float32')
-            sd.play(data, samplerate)
-            await asyncio.sleep(len(data) / samplerate)  # Wait for playback to finish
-        except Exception as e:
-            queue_message(f"ERROR: Failed to play audio chunk: {e}")
+    
+    # Start mouth lights blinking when talking begins
+    set_talking(True)
+    
+    try:
+        async for audio_chunk in generate_tts_audio(text, config, voice_config):
+            try:
+                # Read the audio chunk into a format playable by sounddevice
+                data, samplerate = sf.read(audio_chunk, dtype='float32')
+                sd.play(data, samplerate)
+                await asyncio.sleep(len(data) / samplerate)  # Wait for playback to finish
+            except Exception as e:
+                queue_message(f"ERROR: Failed to play audio chunk: {e}")
+    finally:
+        # Stop mouth lights blinking when talking ends
+        set_talking(False)
