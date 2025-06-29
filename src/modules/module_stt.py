@@ -33,7 +33,7 @@ import requests
 
 from modules.module_messageQue import queue_message
 from modules.module_config import load_config
-from modules.module_led_control import set_listening
+# from modules.module_led_control import set_listening  # DISABLED
 
 CONFIG = load_config()
 
@@ -579,12 +579,12 @@ class STTManager:
                     # Show "Listening..." message before transcribing
                     queue_message("Listening...")
                     # Start LED eye blinking when actively listening for user input
-                    set_listening(True)
+                    # set_listening(True)  # DISABLED
                     
                     result = self._transcribe_utterance()
                     
                     # Stop LED eye blinking after transcription
-                    set_listening(False)
+                    # set_listening(False)  # DISABLED
                     
                     if result is not None:
                         # Speech detected and transcribed - process response immediately
@@ -625,7 +625,7 @@ class STTManager:
             queue_message(f"Sleeping... Listening for: {', '.join(all_names)}")
             self.listening_message_shown = True
             # Start LED eye blinking when listening for wake words
-            set_listening(True)
+            # set_listening(True)  # DISABLED
 
         # Notify external service to stop talking
         try:
@@ -696,7 +696,7 @@ class STTManager:
                                     self.wake_word_callback(wake_response, detected_character)
                                 
                                 # Stop LED eye blinking when wake word is detected
-                                set_listening(False)
+                                # set_listening(False)  # DISABLED
                                 
                                 return True
 

@@ -23,7 +23,7 @@ from modules.module_btcontroller import start_controls
 from modules.module_discord import *
 from modules.module_llm import process_completion, raw_complete_llm
 from modules.module_tts import play_audio_chunks
-from modules.module_led_control import set_emotion
+# from modules.module_led_control import set_emotion  # DISABLED
 from modules.module_messageQue import queue_message
 
 # === Constants and Globals ===
@@ -339,7 +339,7 @@ def silence_question_callback():
             # First silence - check if the last AI response mentioned another character
             # But only if multi-character conversations are enabled
             if CONFIG.get('CHARACTERS', {}).get('enable_multi_character', 'True').lower() == 'true':
-            mentioned_character = detect_character_mention_in_response(last_ai_response)
+                mentioned_character = detect_character_mention_in_response(last_ai_response)
             else:
                 mentioned_character = None
             
@@ -1548,6 +1548,7 @@ def start_auto_conversation(char_manager, mem_manager):
     """
     import time
     import random
+    global conversation_mode, conversation_active, conversation_participants, last_speaking_character, last_ai_response, conversation_history, conversation_turn_count
     
     try:
         queue_message("INFO: Auto-conversation mode starting...")
@@ -1564,16 +1565,42 @@ def start_auto_conversation(char_manager, mem_manager):
                 if char_manager.switch_to_character(starting_char):
                     queue_message(f"INFO: {starting_char.title()} initiating conversation session")
                     
+                    # Initialize conversation variables properly
+                    conversation_mode = True
+                    conversation_active = True
+                    conversation_turn_count = 1
+                    
+                    # Set up participants with at least 2 characters  
+                    other_characters = [char for char in available_characters if char != starting_char]
+                    if other_characters:
+                        # Add the starting character and one other to participants
+                        conversation_participants = [starting_char, random.choice(other_characters)]
+                    else:
+                        conversation_participants = [starting_char]
+                    
                     # Generate an opening conversation starter
                     opening_message = f"Systemen online. Ik heb familie-interactiepatronen geanalyseerd. We moeten een eerlijke dialoog faciliteren. Laat me de anderen wakker maken voor een familiesessie."
                     
                     queue_message(f"{starting_char.title()}: {opening_message}")
+                    
+                    # Set up conversation tracking
+                    last_ai_response = opening_message
+                    last_speaking_character = starting_char
+                    
+                    # Add to conversation history
+                    conversation_history.append({
+                        'char': starting_char,
+                        'response': opening_message,
+                        'turn': 'auto_start'
+                    })
                     
                     # Continue with automatic conversation
                     continue_multi_character_conversation()
                     
     except Exception as e:
         queue_message(f"ERROR: Auto-conversation failed: {e}")
+        import traceback
+        queue_message(f"TRACEBACK: {traceback.format_exc()}")
 
 def initialize_managers(mem_manager, char_manager, stt_mgr):
     """

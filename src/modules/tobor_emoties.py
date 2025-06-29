@@ -1,36 +1,58 @@
 # tobor_emoties.py
 # Emotie-animaties voor Tobor (MAX7219 LED Matrix)
 
-import spidev
 import time
 import random
 
-
 # === Setup SPI ===
-spi = spidev.SpiDev()
-spi.open(0, 0)
-spi.max_speed_hz = 1000000
+spi = None
+SPI_AVAILABLE = False
+
+try:
+    import spidev
+    spi = spidev.SpiDev()
+    spi.open(0, 0)
+    spi.max_speed_hz = 1000000
+    SPI_AVAILABLE = True
+    print("LED Matrix: SPI hardware initialized successfully")
+except Exception as e:
+    print(f"LED Matrix: SPI hardware not available: {e}")
+    print("LED Matrix: Running in simulation mode")
 
 def write(register, data):
-    spi.xfer2([register, data])
+    if SPI_AVAILABLE and spi:
+        spi.xfer2([register, data])
+    else:
+        print(f"LED_MATRIX: Write register {register:02X} = {data:02X}")
 
 def init_display():
-    for cmd, data in [
-        (0x0F, 0x00),  # display test uit
-        (0x0C, 0x01),  # shutdown uit
-        (0x0B, 0x07),  # scan limit
-        (0x0A, 0x04),  # intensity
-        (0x09, 0x00),  # decode mode uit
-    ]:
-        write(cmd, data)
+    if SPI_AVAILABLE:
+        for cmd, data in [
+            (0x0F, 0x00),  # display test uit
+            (0x0C, 0x01),  # shutdown uit
+            (0x0B, 0x07),  # scan limit
+            (0x0A, 0x04),  # intensity
+            (0x09, 0x00),  # decode mode uit
+        ]:
+            write(cmd, data)
+    else:
+        print("LED_MATRIX: Display initialized (simulation mode)")
 
 def show_bitmap(bitmap):
-    for i, row in enumerate(bitmap, start=1):
-        write(i, row)
+    if SPI_AVAILABLE:
+        for i, row in enumerate(bitmap, start=1):
+            write(i, row)
+    else:
+        print("LED_MATRIX: Showing bitmap:")
+        for row in bitmap:
+            print(f"  {row:08b}")
 
 def clear_display():
-    for i in range(1, 9):
-        write(i, 0x00)
+    if SPI_AVAILABLE:
+        for i in range(1, 9):
+            write(i, 0x00)
+    else:
+        print("LED_MATRIX: Display cleared")
 
 # === Emoties ===
 

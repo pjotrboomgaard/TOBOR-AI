@@ -27,7 +27,7 @@ from modules.module_alltalk import text_to_speech_with_pipelining_alltalk
 from modules.module_elevenlabs import text_to_speech_with_pipelining_elevenlabs
 from modules.module_azure import text_to_speech_with_pipelining_azure
 from modules.module_messageQue import queue_message
-from modules.module_led_control import set_talking
+# from modules.module_led_control import set_talking  # DISABLED
 
 def update_tts_settings(ttsurl):
     """
@@ -163,7 +163,7 @@ async def play_audio_chunks(text, config, voice_config=None):
         return
     
     # Start mouth lights blinking when talking begins
-    set_talking(True)
+    # set_talking(True)  # DISABLED
     
     try:
         async for audio_chunk in generate_tts_audio(text, config, voice_config):
@@ -176,4 +176,5 @@ async def play_audio_chunks(text, config, voice_config=None):
                 queue_message(f"ERROR: Failed to play audio chunk: {e}")
     finally:
         # Stop mouth lights blinking when talking ends
-        set_talking(False)
+        # set_talking(False)  # DISABLED
+        pass
