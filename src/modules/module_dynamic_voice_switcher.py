@@ -68,7 +68,7 @@ class VoiceSwitcher:
             },
             'tobor': {  # Default Tobor
                 'name': 'Tobor',
-                'elevenlabs_voice_id': 'JBFqnCBsd6RMkjVDRZzb',
+                'elevenlabs_voice_id': 'ZEcx3Wdpj4EvM8PltzHY',
                 'azure_voice': 'en-US-Steffan:DragonHDLatestNeural',
                 'alltalk_voice': 'tobor_voice',
                 'piper_voice': 'en_US_male_medium',

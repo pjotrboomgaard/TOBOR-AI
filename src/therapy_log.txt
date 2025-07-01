@@ -1,0 +1,66 @@
+/home/pjotska/TARS-AI/src/venv/lib/python3.11/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator MultinomialNB from version 1.6.1 when using version 1.5.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/pjotska/TARS-AI/src/venv/lib/python3.11/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 1.6.1 when using version 1.5.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/pjotska/TARS-AI/src/venv/lib/python3.11/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 1.6.1 when using version 1.5.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+MEMORY: Loaded 5 memory categories for els
+MEMORY: Loaded 15 memory categories for zanne
+MEMORY: Loaded 4 memory categories for mirza
+MEMORY: Loaded 5 memory categories for pjotr
+[00:41:15] 🎭 TARS-AI Voice Therapy Session - FINAL VERSION
+[00:41:15] 🎤 Voice Input + 🔊 Voice Output + 💬 Character Conversations
+[00:41:15] ============================================================
+[00:41:15] Loading configuration...
+[00:41:15] Initializing managers...
+DEBUG: Attempting to load psychology from: ../character/Tobor/characterpsychology
+DEBUG: Directory exists: True
+DEBUG: Found JSON files: ['../character/Tobor/characterpsychology/profiles.json']
+DEBUG: Loaded 9 sections from ../character/Tobor/characterpsychology/profiles.json
+INFO: 9 character psychology sections loaded for character
+LOAD: Character loaded: Tobor (tobor)
+DEBUG: Attempting to load psychology from: ../character/Mirza/characterpsychology
+DEBUG: Directory exists: True
+DEBUG: Found JSON files: ['../character/Mirza/characterpsychology/profiles.json', '../character/Mirza/characterpsychology/profiles copy.json']
+DEBUG: Loaded 4 sections from ../character/Mirza/characterpsychology/profiles.json
+DEBUG: Loaded 4 sections from ../character/Mirza/characterpsychology/profiles copy.json
+INFO: 4 character psychology sections loaded for character
+LOAD: Character loaded: Mirza (mirza)
+DEBUG: Attempting to load psychology from: ../character/Els/characterpsychology
+DEBUG: Directory exists: True
+DEBUG: Found JSON files: ['../character/Els/characterpsychology/profiles.json', '../character/Els/characterpsychology/profiles copy.json']
+DEBUG: Loaded 5 sections from ../character/Els/characterpsychology/profiles.json
+DEBUG: Loaded 4 sections from ../character/Els/characterpsychology/profiles copy.json
+INFO: 5 character psychology sections loaded for character
+LOAD: Character loaded: Els (els)
+DEBUG: Attempting to load psychology from: ../character/Zanne/characterpsychology
+DEBUG: Directory exists: True
+DEBUG: Found JSON files: ['../character/Zanne/characterpsychology/profiles.json', '../character/Zanne/characterpsychology/profiles copy.json']
+DEBUG: Loaded 15 sections from ../character/Zanne/characterpsychology/profiles.json
+DEBUG: Loaded 14 sections from ../character/Zanne/characterpsychology/profiles copy.json
+INFO: 15 character psychology sections loaded for character
+LOAD: Character loaded: Zanne (zanne)
+DEBUG: Attempting to load psychology from: ../character/Pjotr/characterpsychology
+DEBUG: Directory exists: True
+DEBUG: Found JSON files: ['../character/Pjotr/characterpsychology/profiles.json']
+DEBUG: Loaded 5 sections from ../character/Pjotr/characterpsychology/profiles.json
+INFO: 5 character psychology sections loaded for character
+LOAD: Character loaded: Pjotr (pjotr)
+LOAD: Default character set to: Tobor
+INFO: BGE reranker model loaded successfully
+INFO: Initializing HyperDB with hybrid RAG strategy
+INFO: Memory system enabled
+LOAD: Found existing memory: Tobor.pickle.gz
+Split strings:   0%|          | 0/36 [00:00<?, ?it/s]                                                     Stem Tokens:   0%|          | 0/36 [00:00<?, ?it/s]                                                   BM25S Count Tokens:   0%|          | 0/36 [00:00<?, ?it/s]                                                          BM25S Compute Scores:   0%|          | 0/36 [00:00<?, ?it/s]                                                            LOAD: Memory loaded successfully
+INFO: Measuring background noise...
+INFO: Silence threshold: 58.19 dB and 812.0228383102904
+INFO: Vosk model loaded successfully.
+INFO: Measuring background noise...
+[00:41:29] ✅ All therapy systems initialized successfully
+[00:41:29] Memory system loaded: 4 characters
+[00:41:29] INFO: Starting therapy voice input mode
+INFO: Silence threshold: 61.63 dB and 1205.8234291864626
+INFO: STT Manager initialized successfully with rms VAD

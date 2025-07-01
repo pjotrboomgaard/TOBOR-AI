@@ -236,7 +236,7 @@ def detect_relevant_voice(user_prompt: str, ai_response: str, config: dict) -> s
                 return voice_id
     
     # Default fallback to current voice from config
-    default_voice = config.get("TTS", {}).get("voice_id", "JBFqnCBsd6RMkjVDRZzb")
+    default_voice = config.get("TTS", {}).get("voice_id", "ZEcx3Wdpj4EvM8PltzHY")
     queue_message(f"INFO: Using default voice - Voice ID: {default_voice}")
     return default_voice
 
