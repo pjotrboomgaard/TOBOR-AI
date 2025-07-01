@@ -11,6 +11,7 @@ import sys
 import threading
 import time
 from datetime import datetime
+import json
 
 # === Custom Modules ===
 from modules.module_config import load_config
@@ -25,7 +26,8 @@ from modules.module_main import (
     conversation_active,
     last_ai_response,
     conversation_participants,
-    continue_multi_character_conversation
+    continue_multi_character_conversation,
+    utterance_callback
 )
 
 # === Constants and Globals ===
@@ -166,6 +168,7 @@ def interactive_conversation_test():
     print("  start - Start auto conversation")
     print("  switch <character> - Switch to character")
     print("  say <message> - Make current character say something")
+    print("  user <message> - Simulate user voice input")
     print("  status - Show conversation status")
     print("  quit - Exit test")
     
@@ -184,10 +187,10 @@ def interactive_conversation_test():
                 if command == "quit":
                     break
                 elif command == "start":
-                    print_status("Starting auto conversation...")
+                    print_status("Starting therapy session...")
                     auto_thread = threading.Thread(
                         target=start_auto_conversation, 
-                        args=(char_manager, memory_manager), 
+                        args=(char_manager, memory_manager, "therapy"), 
                         daemon=True
                     )
                     auto_thread.start()
@@ -201,6 +204,13 @@ def interactive_conversation_test():
                     message = command.split(" ", 1)[1]
                     char_name = char_manager.char_name
                     print_status(f"{char_name}: {message}")
+                elif command.startswith("user "):
+                    # Simulate user voice input
+                    message = command.split(" ", 1)[1]
+                    print_status(f"User: {message}")
+                    # Trigger utterance callback to simulate voice input (needs JSON format)
+                    message_json = json.dumps({"text": message})
+                    utterance_callback(message_json)
                 elif command == "status":
                     print_status(f"Current character: {char_manager.char_name}")
                     print_status(f"Conversation active: {conversation_active}")
@@ -208,7 +218,7 @@ def interactive_conversation_test():
                     print_status(f"Participants: {conversation_participants}")
                     print_status(f"Available characters: {char_manager.get_character_names()}")
                 elif command == "help":
-                    print("Commands: start, switch <char>, say <msg>, status, quit")
+                    print("Commands: start, switch <char>, say <msg>, user <msg>, status, quit")
                 else:
                     print("Unknown command. Type 'help' for commands.")
                     

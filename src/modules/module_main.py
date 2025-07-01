@@ -167,96 +167,120 @@ def wake_word_callback(wake_response, character_name=None):
 
 def utterance_callback(message):
     """
-    Process the recognized message from STTManager and stream audio response to speakers.
-
-    Parameters:
-    - message (str): The recognized message from the Speech-to-Text (STT) module.
+    Process the recognized message from STTManager for therapy sessions.
+    In therapy mode, user can speak directly without wake words.
     """
     global last_ai_response, conversation_mode, conversation_turn_count, conversation_participants, last_speaking_character, conversation_active
-    
-    # Reset conversation mode when user speaks
-    if conversation_mode:
-        queue_message("INFO: User joined conversation - ending multi-character mode")
-        conversation_mode = False
-        conversation_turn_count = 0
-        conversation_participants = []
-        last_speaking_character = None
-    
-    # User is actively participating - keep conversation going
-    conversation_active = True
     
     try:
         # Parse the user message
         message_dict = json.loads(message)
         if not message_dict.get('text'):  # Handles cases where text is "" or missing
-            #queue_message(f"TARS: Going Idle...")
             return
         
         # Replace phonetic name variations with correct names
         from modules.module_stt import STTManager
         processed_text = STTManager.replace_phonetic_names(message_dict['text'])
         
-        #Print or stream the response
-        #queue_message(f"USER: {message_dict['text']}")
         queue_message(f"USER: {processed_text}", stream=True) 
 
         # Check for shutdown command
         if "shutdown pc" in processed_text.lower():
             queue_message(f"SHUTDOWN: Shutting down the PC...")
             os.system('shutdown /s /t 0')
-            return  # Exit function after issuing shutdown command
+            return
         
         # Check if the message contains unknown names and warn LLM
         unknown_names = detect_unknown_names(processed_text)
         if unknown_names:
             processed_text += f" [SYSTEM: De namen {', '.join(unknown_names)} zijn onbekend - vraag om verduidelijking in plaats van verhalen te verzinnen]"
         
-        # Process the message using process_completion
-        reply = process_completion(processed_text)  # Process the message
-
-        # Extract the <think> block if present
-        try:
-            match = re.search(r"<think>(.*?)</think>", reply, re.DOTALL)
-            thoughts = match.group(1).strip() if match else ""
-            
-            # Remove the <think> block and clean up trailing whitespace/newlines
-            reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
-        except Exception:
-            thoughts = ""
-
-        # Debug output for thoughts
-        if thoughts:
-            #queue_message(f"DEBUG: Thoughts\n{thoughts}")
-            pass
-
-        # Stream the AI's reply
-        char_name = character_manager.char_name if character_manager else "TARS"
-        queue_message(f"{char_name}: {reply}", stream=True)
+        # THERAPY SESSION FLOW - Characters respond to user topic
+        conversation_active = True
         
-        # Store the last AI response for character mention detection
-        last_ai_response = reply
-        last_speaking_character = char_name  # Track who just spoke
+        # If we're in a conversation already, stop auto-conversation
+        if conversation_mode:
+            queue_message("INFO: User joined conversation - ending multi-character mode")
+            conversation_mode = False
+            conversation_turn_count = 0
+            conversation_participants = []
+            last_speaking_character = None
         
-        # Add to conversation history
-        conversation_history.append({
-            'char': char_name,
-            'response': reply,
-            'turn': 'user_response'
-        })
-
-        # Strip special chars so he doesnt say them
-        reply = re.sub(r'[^a-zA-Z0-9\s.,?!;:"\'-]', '', reply)
+        # Start family responses to user's topic
+        start_family_responses_to_user(processed_text)
         
-        # Get current character's voice configuration
-        voice_config = character_manager.get_current_character_voice_config() if character_manager else None
-        
-        # Stream TTS audio to speakers with character voice
-        asyncio.run(play_audio_chunks(reply, CONFIG['TTS']['ttsoption'], voice_config))
-
-    except json.JSONDecodeError:
-        queue_message("ERROR: Invalid JSON format. Could not process user message.")
     except Exception as e:
-        queue_message(f"ERROR: {e}")
+        queue_message(f"ERROR: Utterance processing failed: {e}")
+        import traceback
+        queue_message(f"TRACEBACK: {traceback.format_exc()}")
+
+def start_family_responses_to_user(user_message):
+    """
+    Generate family member responses to user's topic in therapy session.
+    """
+    global conversation_mode, conversation_participants, conversation_turn_count, character_manager
+    
+    try:
+        available_characters = character_manager.get_character_names() if character_manager else []
+        if not available_characters:
+            return
+        
+        # Set up therapy conversation mode
+        conversation_mode = True
+        conversation_active = True
+        conversation_turn_count = 1
+        
+        # Include all family members except Tobor (he already opened)
+        family_members = [char for char in available_characters if char.lower() != 'tobor']
+        conversation_participants = ['tobor'] + family_members
+        
+        # Add user message to conversation history
+        conversation_history.append({
+            'char': 'user',
+            'response': user_message,
+            'turn': 'user_input'
+        })
+        
+        # Tobor responds first as therapist
+        if 'tobor' in available_characters and character_manager:
+            character_manager.switch_to_character('tobor')
+            tobor_response = therapy_system.generate_character_response(
+                'tobor', 
+                'user', 
+                f"User heeft gezegd: {user_message}", 
+                1
+            )
+            
+            # Clean and play Tobor's response
+            clean_response = clean_character_response(tobor_response, 'tobor')
+            queue_message(f"Tobor: {clean_response}", stream=True)
+            
+            # Play audio
+            if character_manager:
+                voice_config = character_manager.get_current_character_voice_config()
+                asyncio.run(play_audio_chunks(clean_response, CONFIG['TTS']['ttsoption'], voice_config))
+            
+            # Add to history
+            conversation_history.append({
+                'char': 'tobor',
+                'response': clean_response,
+                'turn': 'therapist_response'
+            })
+            
+            last_ai_response = clean_response
+            last_speaking_character = 'tobor'
+        
+        # Brief pause before family responses
+        import time
+        time.sleep(2)
+        
+        # Continue with family conversation
+        continue_multi_character_conversation()
+        
+    except Exception as e:
+        queue_message(f"ERROR: Family response generation failed: {e}")
+        import traceback
+        queue_message(f"TRACEBACK: {traceback.format_exc()}")
 
 def post_utterance_callback():
     """
@@ -1416,79 +1440,122 @@ def detect_actual_target_from_context(conversation_context):
     return None
 
 # === Initialization ===
-def start_auto_conversation(char_manager, mem_manager):
+def start_auto_conversation(char_manager, mem_manager, mode="conversation"):
     """
-    Start an automatic conversation for testing purposes.
-    This function runs in a separate thread.
+    Start conversations based on mode:
+    - "conversation": Normal multi-character conversations (for automatic testing)
+    - "therapy": Therapy session where Tobor asks what user wants to discuss (for interactive)
     """
     import time
     import random
     global conversation_mode, conversation_active, conversation_participants, last_speaking_character, last_ai_response, conversation_history, conversation_turn_count
     
     try:
-        queue_message("INFO: Auto-conversation mode starting...")
-        time.sleep(2)  # Give the system time to start up
-        
-        # Get available characters
-        if char_manager:
-            available_characters = char_manager.get_character_names()
-            if available_characters:
-                # Make Tobor much more likely to start conversations (80% chance)
-                if 'tobor' in available_characters and random.random() < 0.8:
-                    starting_char = 'tobor'
-                else:
-                    # Pick a random character to start
-                    starting_char = random.choice(available_characters)
-                
-                # Switch to that character
-                if char_manager.switch_to_character(starting_char):
-                    queue_message(f"INFO: {starting_char.title()} initiating conversation session")
+        if mode == "therapy":
+            # THERAPY SESSION MODE (Interactive)
+            queue_message("INFO: Starting family therapy session...")
+            time.sleep(2)
+            
+            if char_manager:
+                available_characters = char_manager.get_character_names()
+                if available_characters:
+                    # Tobor always starts therapy sessions
+                    starting_char = 'tobor' if 'tobor' in available_characters else available_characters[0]
                     
-                    # Initialize conversation variables properly
-                    conversation_mode = True
-                    conversation_active = True
-                    conversation_turn_count = 1
-                    
-                    # Set up participants with at least 2 characters  
-                    other_characters = [char for char in available_characters if char != starting_char]
-                    if other_characters:
-                        # Add the starting character and one other to participants
-                        conversation_participants = [starting_char, random.choice(other_characters)]
-                    else:
+                    # Switch to Tobor
+                    if char_manager.switch_to_character(starting_char):
+                        queue_message(f"INFO: {starting_char.title()} starting therapy session")
+                        
+                        # Initialize therapy session variables
+                        conversation_mode = False  # Don't start auto-conversation
+                        conversation_active = True
+                        conversation_turn_count = 0
                         conversation_participants = [starting_char]
-                    
-                    # Generate character-specific opening conversation starter
-                    if starting_char.lower() == 'tobor':
-                        opening_message = "Welkom, familie. Ik ben Tobor, jullie therapeutische constructie. Ik heb familie-interactiepatronen geanalyseerd en detecteer significante communicatiebarrières. We moeten deze systematische disfuncties aanpakken. Zanne, laten we met jou beginnen - beschrijf je huidige emotionele staat."
-                    elif starting_char.lower() == 'zanne':
-                        opening_message = "Ik voel me zo moe van alles. We praten nooit echt met elkaar. Altijd om de hete brij heen."
-                    elif starting_char.lower() == 'els':
-                        opening_message = "Ik maak me zorgen om deze familie. We kunnen dit beschaafd bespreken, maar iedereen is altijd zo defensief."
-                    elif starting_char.lower() == 'mirza':
-                        opening_message = "Ik was weer afwezig in mijn projecten. Maar ik voel dat er spanning is. Misschien kunnen we praten?"
-                    elif starting_char.lower() == 'pjotr':
-                        opening_message = "Ik voel de spanning tussen iedereen. Het maakt me verdrietig dat we zo moeilijk kunnen communiceren."
+                        
+                        # Tobor opens the session asking what user wants to discuss
+                        opening_message = "Goedemorgen, familie. Ik ben Tobor, jullie therapeutische begeleider. Welkom bij onze familiesessie. Vertel me, waar wil je vandaag over praten? Wat houdt je bezig?"
+                        
+                        queue_message(f"{starting_char.title()}: {opening_message}")
+                        
+                        # Set up conversation tracking
+                        last_ai_response = opening_message
+                        last_speaking_character = starting_char
+                        
+                        # Add to conversation history
+                        conversation_history.append({
+                            'char': starting_char,
+                            'response': opening_message,
+                            'turn': 'session_start'
+                        })
+                        
+                        # Now wait for user input - don't start auto-conversation
+                        # The system will naturally wait for user speech through STT
+        
+        else:
+            # NORMAL CONVERSATION MODE (Automatic testing)
+            queue_message("INFO: Auto-conversation mode starting...")
+            time.sleep(2)
+            
+            # Get available characters
+            if char_manager:
+                available_characters = char_manager.get_character_names()
+                if available_characters:
+                    # Make Tobor more likely to start conversations (80% chance)
+                    if 'tobor' in available_characters and random.random() < 0.8:
+                        starting_char = 'tobor'
                     else:
-                        opening_message = "We moeten praten als familie. Er zijn dingen die gezegd moeten worden."
+                        # Pick a random character to start
+                        starting_char = random.choice(available_characters)
                     
-                    queue_message(f"{starting_char.title()}: {opening_message}")
-                    
-                    # Set up conversation tracking
-                    last_ai_response = opening_message
-                    last_speaking_character = starting_char
-                    
-                    # Add to conversation history
-                    conversation_history.append({
-                        'char': starting_char,
-                        'response': opening_message,
-                        'turn': 'auto_start'
-                    })
-                    
-                    # Continue with automatic conversation
-                    continue_multi_character_conversation()
-                    
+                    # Switch to that character
+                    if char_manager.switch_to_character(starting_char):
+                        queue_message(f"INFO: {starting_char.title()} initiating conversation session")
+                        
+                        # Initialize conversation variables properly
+                        conversation_mode = True
+                        conversation_active = True
+                        conversation_turn_count = 1
+                        
+                        # Set up participants with at least 2 characters
+                        other_characters = [char for char in available_characters if char != starting_char]
+                        if other_characters:
+                            # Add the starting character and one other to participants
+                            conversation_participants = [starting_char, random.choice(other_characters)]
+                        else:
+                            conversation_participants = [starting_char]
+                        
+                        # Generate character-specific opening conversation starter
+                        if starting_char.lower() == 'tobor':
+                            opening_message = "Welkom, familie. Ik ben Tobor, jullie therapeutische constructie. Ik heb familie-interactiepatronen geanalyseerd en detecteer significante communicatiebarrières. We moeten deze systematische disfuncties aanpakken. Zanne, laten we met jou beginnen - beschrijf je huidige emotionele staat."
+                        elif starting_char.lower() == 'zanne':
+                            opening_message = "Ik voel me zo moe van alles. We praten nooit echt met elkaar. Altijd om de hete brij heen."
+                        elif starting_char.lower() == 'els':
+                            opening_message = "Ik maak me zorgen om deze familie. We kunnen dit beschaafd bespreken, maar iedereen is altijd zo defensief."
+                        elif starting_char.lower() == 'mirza':
+                            opening_message = "Ik was weer afwezig in mijn projecten. Maar ik voel dat er spanning is. Misschien kunnen we praten?"
+                        elif starting_char.lower() == 'pjotr':
+                            opening_message = "Ik voel de spanning tussen iedereen. Het maakt me verdrietig dat we zo moeilijk kunnen communiceren."
+                        else:
+                            opening_message = "We moeten praten als familie. Er zijn dingen die gezegd moeten worden."
+                        
+                        queue_message(f"{starting_char.title()}: {opening_message}")
+                        
+                        # Set up conversation tracking
+                        last_ai_response = opening_message
+                        last_speaking_character = starting_char
+                        
+                        # Add to conversation history
+                        conversation_history.append({
+                            'char': starting_char,
+                            'response': opening_message,
+                            'turn': 'auto_start'
+                        })
+                        
+                        # Continue with automatic conversation
+                        continue_multi_character_conversation()
+                        
     except Exception as e:
-        queue_message(f"ERROR: Auto-conversation failed: {e}")
+        queue_message(f"ERROR: Conversation start failed: {e}")
         import traceback
         queue_message(f"TRACEBACK: {traceback.format_exc()}")
 

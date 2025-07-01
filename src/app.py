@@ -114,7 +114,7 @@ if __name__ == "__main__":
             queue_message("INFO: Test mode enabled - starting auto conversation thread")
             auto_conversation_thread = threading.Thread(
                 target=start_auto_conversation, 
-                args=(char_manager, memory_manager), 
+                args=(char_manager, memory_manager, "therapy"), 
                 daemon=True
             )
             auto_conversation_thread.start()
