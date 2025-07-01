@@ -25,6 +25,7 @@ from modules.module_llm import process_completion, raw_complete_llm
 from modules.module_tts import play_audio_chunks
 # from modules.module_led_control import set_emotion  # DISABLED
 from modules.module_messageQue import queue_message
+from modules.family_therapy_system import therapy_system
 
 # === Constants and Globals ===
 character_manager = None
@@ -664,143 +665,17 @@ def continue_multi_character_conversation():
         generate_single_character_question()
 
 def generate_enhanced_personality_response(char_name, target_character, conversation_context, previous_responses, turn_number):
-    """Generate enhanced responses with specific character thoughts about each other."""
+    """Generate enhanced responses using family therapy system for natural conversation."""
     
-    # Get specific relationship insights from psychology profiles
-    relationship_insight = get_character_specific_relationship_view(char_name, target_character)
+    # Use family therapy system for authentic responses
+    response = therapy_system.generate_character_response(
+        char_name, 
+        target_character, 
+        conversation_context, 
+        turn_number
+    )
     
-    # Every 5th turn, encourage characters to ask what others think about them
-    encourage_reciprocal = (turn_number % 5 == 0 and turn_number > 0)
-    
-    # CHARACTER-SPECIFIC ENHANCED RESPONSES WITH SPECIFIC THOUGHTS
-    if char_name.lower() == 'zanne':
-        # Every 3rd turn, Zanne shares a specific opinion about the other character
-        if turn_number % 3 == 0 and relationship_insight:
-            prompt = f"""Je bent Zanne. Je gaat nu iets specifieks zeggen over {target_character.upper()} gebaseerd op hoe je over hen denkt.
-
-CONTEXT: {conversation_context}
-
-JE GEDACHTEN OVER {target_character.upper()}: {relationship_insight}
-
-ZANNE'S DIRECTE STIJL - JE GAAT NU SPECIFIEK OVER {target_character.upper()} PRATEN:
-Begin met "{target_character.title()}, " en zeg dan wat je ECHT over hen denkt.
-
-Voorbeelden van hoe je dit doet:
-- "{target_character.title()}, soms denk ik dat jij..."
-- "{target_character.title()}, wat me aan jou opvalt is..."
-- "{target_character.title()}, ik snap niet waarom jij altijd..."
-- "{target_character.title()}, het irriteert me als jij..."
-- "{target_character.title()}, wat ik wel mooi vind aan jou is..."
-
-Wees specifiek en eerlijk over hun persoonlijkheid, hun manier van doen, hun gewoontes. 
-{"EN VRAAG DAN WAT ZIJ VAN JOU VINDEN: 'Wat vind jij eigenlijk van mij?'" if encourage_reciprocal else ""}
-Max {"40" if encourage_reciprocal else "35"} woorden. Antwoord ALLEEN als Zanne:"""
-        else:
-            prompt = f"""Je bent Zanne. Je reageert direct op {target_character.upper()}.
-
-CONTEXT: {conversation_context}
-
-ZANNE'S CONFRONTERENDE STIJL:
-Begin met "{target_character.title()}, " en reageer direct op wat zij net zeiden.
-{"Eindig met een vraag om hen ook iets over jou te laten zeggen." if encourage_reciprocal else ""}
-
-Max {"35" if encourage_reciprocal else "30"} woorden. Wees eerlijk en direct. Antwoord ALLEEN als Zanne:"""
-
-    elif char_name.lower() == 'els':
-        # Every 4th turn, Els shares her specific thoughts about the other character
-        if turn_number % 4 == 0 and relationship_insight:
-            prompt = f"""Je bent Els. Je gaat nu iets specifieks zeggen over {target_character.upper()} gebaseerd op hoe je over hen denkt.
-
-CONTEXT: {conversation_context}
-
-JE GEDACHTEN OVER {target_character.upper()}: {relationship_insight}
-
-ELS' BEZORGDE MAAR POSITIEVE STIJL - JE GAAT NU SPECIFIEK OVER {target_character.upper()} PRATEN:
-Begin met "{target_character.title()}, " en deel je gedachten over hen op een positieve maar bezorgde manier.
-
-Voorbeelden:
-- "{target_character.title()}, wat ik zo mooi vind aan jou is... maar ik maak me wel zorgen over..."
-- "{target_character.title()}, je bent zo... al vraag ik me wel af of..."
-- "{target_character.title()}, ik bewonder hoe jij... hoewel ik soms denk..."
-- "{target_character.title()}, het raakt me hoe jij... al zou ik willen dat..."
-
-Wees specifiek over hun karakter, hun sterke punten en je bezorgdheden.
-{"EN VRAAG DAN BEZORGD: 'Maar vertel eens, hoe zie jij mij eigenlijk?'" if encourage_reciprocal else ""}
-Max {"45" if encourage_reciprocal else "40"} woorden. Antwoord ALLEEN als Els:"""
-        else:
-            prompt = f"""Je bent Els. Je reageert ondersteunend maar bezorgd op {target_character.upper()}.
-
-CONTEXT: {conversation_context}
-
-Begin met "{target_character.title()}, " en reageer positief maar met voorzichtige bezorgdheid.
-{"Eindig met een bezorgde vraag om hen over jezelf te laten praten." if encourage_reciprocal else ""}
-Max {"35" if encourage_reciprocal else "30"} woorden. Antwoord ALLEEN als Els:"""
-
-    elif char_name.lower() == 'mirza':
-        # Every 3rd turn, Mirza analyzes the other character specifically
-        if turn_number % 3 == 0 and relationship_insight:
-            prompt = f"""Je bent Mirza. Je gaat nu een psychologische analyse geven van {target_character.upper()}.
-
-CONTEXT: {conversation_context}
-
-JE GEDACHTEN OVER {target_character.upper()}: {relationship_insight}
-
-MIRZA'S ANALYTISCHE STIJL - JE GAAT NU {target_character.upper()} ANALYSEREN:
-Begin met "{target_character.title()}, " en geef een psychologische observatie over hun gedrag/persoonlijkheid.
-
-Voorbeelden:
-- "{target_character.title()}, psychologisch gezien zie ik dat jij..."
-- "{target_character.title()}, je gedragspatroon toont..."
-- "{target_character.title()}, wat interessant is aan jouw manier van..."
-- "{target_character.title()}, ik herken in jou de neiging om..."
-
-Wees specifiek over hun psychologische patronen en gedrag.
-{"EN VRAAG DAN: 'Ik ben benieuwd hoe jij mijn gedrag interpreteert?'" if encourage_reciprocal else ""}
-Max {"45" if encourage_reciprocal else "40"} woorden. Antwoord ALLEEN als Mirza:"""
-        else:
-            prompt = f"""Je bent Mirza. Je reageert analytisch op {target_character.upper()}.
-
-CONTEXT: {conversation_context}
-
-Begin met "{target_character.title()}, " en geef een psychologisch inzicht.
-{"Eindig met een vraag om hun perspectief op jou te horen." if encourage_reciprocal else ""}
-Max {"40" if encourage_reciprocal else "35"} woorden. Antwoord ALLEEN als Mirza:"""
-
-    elif char_name.lower() == 'pjotr':
-        # Every 3rd turn, Pjotr shares his gentle observations about the other character
-        if turn_number % 3 == 0 and relationship_insight:
-            prompt = f"""Je bent Pjotr. Je gaat nu iets zachts maar diepgaands zeggen over {target_character.upper()}.
-
-CONTEXT: {conversation_context}
-
-JE GEDACHTEN OVER {target_character.upper()}: {relationship_insight}
-
-PJOTR'S ZACHTE DIPLOMATIEKE STIJL - JE GAAT NU OVER {target_character.upper()} PRATEN:
-Begin met "{target_character.title()}, " en deel je zachte maar eerlijke observaties over hen.
-
-Voorbeelden:
-- "{target_character.title()}, soms zie ik hoe jij... en dan denk ik..."
-- "{target_character.title()}, wat me opvalt aan jou is hoe jij..."
-- "{target_character.title()}, ik waardeer hoe jij... al vraag ik me af of..."
-- "{target_character.title()}, er is iets moois in de manier waarop jij..."
-
-Wees specifiek maar zacht over hun persoonlijkheid en gedrag.
-{"EN VRAAG DAN ZACHT: 'Ik ben benieuwd... hoe zie jij mij?'" if encourage_reciprocal else ""}
-Max {"40" if encourage_reciprocal else "35"} woorden. Antwoord ALLEEN als Pjotr:"""
-        else:
-            prompt = f"""Je bent Pjotr. Je reageert zacht en diplomatiek op {target_character.upper()}.
-
-CONTEXT: {conversation_context}
-
-Begin met "{target_character.title()}, " en reageer met zachte wijsheid.
-{"Eindig met een zachte vraag om hen over jou te laten praten." if encourage_reciprocal else ""}
-Max {"35" if encourage_reciprocal else "30"} woorden. Antwoord ALLEEN als Pjotr:"""
-
-    else:
-        # Fallback
-        prompt = f"""Reageer direct op {target_character} gebaseerd op wat zij net zeiden. Begin met hun naam. Max 25 woorden."""
-
-    return raw_complete_llm(prompt, istext=True)
+    return response
 
 def listen_for_user_input(timeout=3):
     """
@@ -1558,8 +1433,12 @@ def start_auto_conversation(char_manager, mem_manager):
         if char_manager:
             available_characters = char_manager.get_character_names()
             if available_characters:
-                # Pick a random character to start
-                starting_char = random.choice(available_characters)
+                # Make Tobor much more likely to start conversations (80% chance)
+                if 'tobor' in available_characters and random.random() < 0.8:
+                    starting_char = 'tobor'
+                else:
+                    # Pick a random character to start
+                    starting_char = random.choice(available_characters)
                 
                 # Switch to that character
                 if char_manager.switch_to_character(starting_char):
@@ -1578,8 +1457,19 @@ def start_auto_conversation(char_manager, mem_manager):
                     else:
                         conversation_participants = [starting_char]
                     
-                    # Generate an opening conversation starter
-                    opening_message = f"Systemen online. Ik heb familie-interactiepatronen geanalyseerd. We moeten een eerlijke dialoog faciliteren. Laat me de anderen wakker maken voor een familiesessie."
+                    # Generate character-specific opening conversation starter
+                    if starting_char.lower() == 'tobor':
+                        opening_message = "Welkom, familie. Ik ben Tobor, jullie therapeutische constructie. Ik heb familie-interactiepatronen geanalyseerd en detecteer significante communicatiebarrières. We moeten deze systematische disfuncties aanpakken. Zanne, laten we met jou beginnen - beschrijf je huidige emotionele staat."
+                    elif starting_char.lower() == 'zanne':
+                        opening_message = "Ik voel me zo moe van alles. We praten nooit echt met elkaar. Altijd om de hete brij heen."
+                    elif starting_char.lower() == 'els':
+                        opening_message = "Ik maak me zorgen om deze familie. We kunnen dit beschaafd bespreken, maar iedereen is altijd zo defensief."
+                    elif starting_char.lower() == 'mirza':
+                        opening_message = "Ik was weer afwezig in mijn projecten. Maar ik voel dat er spanning is. Misschien kunnen we praten?"
+                    elif starting_char.lower() == 'pjotr':
+                        opening_message = "Ik voel de spanning tussen iedereen. Het maakt me verdrietig dat we zo moeilijk kunnen communiceren."
+                    else:
+                        opening_message = "We moeten praten als familie. Er zijn dingen die gezegd moeten worden."
                     
                     queue_message(f"{starting_char.title()}: {opening_message}")
                     

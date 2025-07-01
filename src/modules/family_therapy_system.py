@@ -178,38 +178,38 @@ class FamilyTherapySystem:
         if char == 'zanne':
             # Very specific explosive interruptions based on exact triggers
             if 'rechtop zitten' in trigger_lower or 'ga eens rechtop' in trigger_lower or 'scheef' in trigger_lower:
-                return "[screaming] Stop! Ik ben 44! [angry] Je hoeft me niet te vertellen hoe ik moet zitten!"
+                return "Stop! Ik ben 44! Je hoeft me niet te vertellen hoe ik moet zitten!"
             elif 'positiever denken' in trigger_lower or 'glimlachen' in trigger_lower:
-                return "[bitter] Zie je wel! Daar doe je het weer! Ik vertel je wat ik voelde en jij vertelt me hoe ik me had moeten voelen!"
+                return "Zie je wel! Daar doe je het weer! Ik vertel je wat ik voelde en jij vertelt me hoe ik me had moeten voelen!"
             elif 'mindfulness' in trigger_lower or 'meditatie' in trigger_lower or 'ademhaling' in trigger_lower:
-                return "[screaming] HOU OP! [furious] Altijd die stomme mindfulness! Niet alles kan opgelost worden met ademhalen!"
+                return "HOU OP! Altijd die stomme mindfulness! Niet alles kan opgelost worden met ademhalen!"
             elif 'je moet' in trigger_lower or 'fel doen' in trigger_lower or 'beschaafd' in trigger_lower:
-                return "[explosive] Stop! Ik ben 44! [angry] Je hoeft me niet te vertellen hoe ik moet luisteren!"
+                return "Stop! Ik ben 44! Je hoeft me niet te vertellen hoe ik moet luisteren!"
             elif 'verbeteren' in trigger_lower or 'tips' in trigger_lower:
-                return "[screaming] HOUD OP! [desperate] Houd op met me vertellen hoe ik moet zijn! Houd op met me verbeteren! Ik ben geen project!"
+                return "HOUD OP! Houd op met me vertellen hoe ik moet zijn! Houd op met me verbeteren! Ik ben geen project!"
             else:
                 explosive_options = [
-                    "[bitter] Zie je wel! Daar doe je het weer!",
-                    "[screaming] STOP MET ME VERBETEREN!",
-                    "[frustrated] Niemand van jullie VRAAGT wat ik eigenlijk nodig heb!",
-                    "[angry] Jullie vertellen me altijd hoe ik moet voelen!"
+                    "Zie je wel! Daar doe je het weer!",
+                    "STOP MET ME VERBETEREN!",
+                    "Niemand van jullie VRAAGT wat ik eigenlijk nodig heb!",
+                    "Jullie vertellen me altijd hoe ik moet voelen!"
                 ]
                 return random.choice(explosive_options)
         
         elif char == 'els':
             if 'schreeuwen' in trigger_lower or 'STOP' in trigger_message or 'HOU OP' in trigger_message:
-                return "[stern] Nu niet zo fel doen. [correcting] We kunnen dit beschaafd bespreken. En je houding helpt ook niet."
+                return "Nu niet zo fel doen. We kunnen dit beschaafd bespreken. En je houding helpt ook niet."
             else:
-                return "[lecturing] Je hoeft niet zo te schreeuwen. [matter-of-factly] Laten we dit beschaafd bespreken."
+                return "Je hoeft niet zo te schreeuwen. Laten we dit beschaafd bespreken."
         
         elif char == 'mirza':
             if 'stomme mindfulness' in trigger_lower or 'hou op met meditatie' in trigger_lower:
-                return "[calm] Misschien moeten we allemaal even drie diepe ademhalingen nemen. [meditative] In meditatie leren we dat emoties als wolken zijn."
+                return "Misschien moeten we allemaal even drie diepe ademhalingen nemen. In meditatie leren we dat emoties als wolken zijn."
             else:
-                return "[excited] Er is een prachtige mindfulness techniek die zou kunnen helpen. [enthusiastic] Ik ken een geweldige app..."
+                return "Er is een prachtige mindfulness techniek die zou kunnen helpen. Ik ken een geweldige app..."
         
         elif char == 'pjotr':
-            return "[gentle] Misschien kunnen we allemaal even pauzeren en naar elkaar luisteren. [diplomatic] We willen allemaal hetzelfde."
+            return "Misschien kunnen we allemaal even pauzeren en naar elkaar luisteren. We willen allemaal hetzelfde."
         
         return None
     
@@ -257,28 +257,30 @@ class FamilyTherapySystem:
         # High emotional tension responses
         if self.emotional_tension > 6 or triggered:
             explosive_responses = [
-                f"\"{target.title()}, niemand van jullie VRAAGT wat ik eigenlijk nodig heb!\" she said with growing frustration. \"Jullie nemen allemaal aan en worden dan gefrustreerd als ik niet dankbaar genoeg ben!\" she added angrily.",
-                f"\"{target.title()}, zie je wel! Daar doe je het weer!\" she said bitterly, her voice rising with emotion. \"Ik vertel je wat ik voelde en jij vertelt me hoe ik me had moeten voelen!\"",
-                f"\"{target.title()}, geweldig, zelfs onze robottherapist heeft ons meteen door,\" she said sarcastically. \"Typisch dat jullie nu ook nog een robot nodig hebben om te horen wat ik al jaren probeer te zeggen!\" she added with bitter resentment.",
-                f"\"{target.title()}, ik had iemand nodig die me niet constant vertelde wat ik verkeerd deed,\" she said desperately, her voice beginning to crack. \"Iemand die niet meteen met oplossingen kwam voordat ze überhaupt begrepen wat het probleem was!\""
+                "Niemand van jullie VRAAGT wat ik eigenlijk nodig heb! Jullie nemen allemaal aan en worden dan gefrustreerd als ik niet dankbaar genoeg ben!",
+                "Zie je wel! Daar doe je het weer! Ik vertel je wat ik voelde en jij vertelt me hoe ik me had moeten voelen!",
+                "Geweldig, zelfs onze robottherapist heeft ons meteen door. Typisch dat jullie nu ook nog een robot nodig hebben om te horen wat ik al jaren probeer te zeggen!",
+                "Ik had iemand nodig die me niet constant vertelde wat ik verkeerd deed. Iemand die niet meteen met oplossingen kwam voordat ze überhaupt begrepen wat het probleem was!"
             ]
             return random.choice(explosive_responses)
         
         # Breakthrough moments (later in conversation)
         if turn > 8 and random.random() < 0.3:
             breakthrough_responses = [
-                f"\"{target.title()}, voor het eerst voel ik dat ik misschien niet het kapotte stuk ben in deze familiepuzzel,\" she said with growing hope. \"Maar jullie moeten echt stoppen met me behandelen alsof ik gerepareerd moet worden,\" she added firmly.",
-                f"\"{target.title()}, jij hoort de patronen daadwerkelijk... waarom kunnen mensen dat niet?\" she said emotionally, tears starting to form. \"Waarom moet ik een robot nodig hebben om me begrepen te voelen?\"",
-                f"\"{target.title()}, ik kon het nooit goed doen,\" she said, her voice beginning to break. \"Hij wilde dat ik rustig en spiritueel was, zij wilde dat ik avontuurlijk en vrij was,\" she added sadly."
+                "Voor het eerst voel ik dat ik misschien niet het kapotte stuk ben in deze familiepuzzel. Maar jullie moeten echt stoppen met me behandelen alsof ik gerepareerd moet worden.",
+                "Jij hoort de patronen daadwerkelijk... waarom kunnen mensen dat niet? Waarom moet ik een robot nodig hebben om me begrepen te voelen?",
+                "Ik kon het nooit goed doen. Hij wilde dat ik rustig en spiritueel was, zij wilde dat ik avontuurlijk en vrij was."
             ]
             return random.choice(breakthrough_responses)
         
-        # Sarcastic/bitter responses
+        # Sarcastic/bitter emotional responses
         bitter_responses = [
-            f"\"{target.title()}, ja, omdat jullie dat kennelijk niet kunnen!\" she said bitterly.",
-            f"\"{target.title()}, natuurlijk! De magische mindfulness-app!\" she said sarcastically. \"Lost alles op, toch?\" she added mockingly.",
-            f"\"{target.title()}, structuur? Ik wist nooit wat jullie van me verwachtten,\" she said with clear frustration.",
-            f"\"{target.title()}, het is altijd wat IK verkeerd doe!\" she said bitterly."
+            "Ja, omdat jullie dat kennelijk niet kunnen!",
+            "Natuurlijk! De magische mindfulness-app! Lost alles op, toch?",
+            "Structuur? Ik wist nooit wat jullie van me verwachtten.",
+            "Het is altijd wat IK verkeerd doe!",
+            "Ik voel me zo moe van altijd uitleggen waarom ik pijn heb.",
+            "Soms denk ik dat jullie me gewoon anders willen dan ik ben."
         ]
         return random.choice(bitter_responses)
     
@@ -288,16 +290,18 @@ class FamilyTherapySystem:
         
         # Els automatically corrects behavior - this is her pattern
         corrective_responses = [
-            f"[matter-of-factly] {target.title()}, je overdrijft. Ik ben meteen gekomen toen hij geboren werd. [lecturing] Je moet gewoon wat positiever denken. En trouwens, je houding nu helpt ook niet - je zit er bij alsof de hele wereld tegen je is.",
-            f"[correcting] {target.title()}, je moet niet zo fel doen. Hij deed zijn best. [stern] En {target.lower()}, luister nu eens gewoon zonder meteen boos te worden.",
-            f"[lecturing] {target.title()}, je hebt gelijk. Misschien moeten we allemaal wat meer... [automatic] ga eens rechtop zitten, je zit helemaal scheef.",
-            f"[helpful] {target.title()}, je moet mensen de kans geven je te helpen. [correcting] En je houding maakt het er niet makkelijker op. Misschien als je wat meer glimlacht...",
-            f"[lecturing] {target.title()}, je hoeft niet zo te schreeuwen. [matter-of-factly] We kunnen dit beschaafd bespreken. En {target.lower()}, zeg ook eens wat - je zit daar maar."
+            "Je overdrijft. Ik ben meteen gekomen toen hij geboren werd. Je moet gewoon wat positiever denken. En trouwens, je houding nu helpt ook niet.",
+            "Je moet niet zo fel doen. Hij deed zijn best. Luister nu eens gewoon zonder meteen boos te worden.",
+            "Je hebt gelijk. Misschien moeten we allemaal wat meer... ga eens rechtop zitten, je zit helemaal scheef.",
+            "Je moet mensen de kans geven je te helpen. En je houding maakt het er niet makkelijker op. Misschien als je wat meer glimlacht...",
+            "Je hoeft niet zo te schreeuwen. We kunnen dit beschaafd bespreken.",
+            "Ik maak me zorgen om je. Je lijkt zo gestrest de laatste tijd.",
+            "Ik probeer alleen maar te helpen. Waarom wordt dat altijd verkeerd begrepen?"
         ]
         
         # Breakthrough moment (Els realizes her pattern)
         if self.emotional_tension > 8 and random.random() < 0.2:
-            return f"[realization] {target.title()}, misschien... misschien behandel ik iedereen alsof ze gerepareerd moeten worden. [laughing sadly] Oh... ik was je weer aan het vertellen wat je moest doen."
+            return "Misschien... misschien behandel ik iedereen alsof ze gerepareerd moeten worden. Oh... ik was je weer aan het vertellen wat je moest doen."
         
         return random.choice(corrective_responses)
     
@@ -307,16 +311,18 @@ class FamilyTherapySystem:
         
         # Mirza's automatic pattern - always offers mindfulness, even when inappropriate
         mindfulness_responses = [
-            f"[distracted] {target.title()}, misschien moeten we eerst een korte meditatie doen om onszelf te centreren? [thoughtful] De spraakherkenning lijkt goed te werken. Hoewel ik de empathie-algoritmes nog even moet nakijken...",
-            f"[guilty] {target.title()}, ik was... afwezig. Altijd in mijn hoofd, in mijn projecten. [enthusiastic] Maar weet je, door dagelijkse meditatiepraktijk had ik dat kunnen voorkomen. Er zijn prachtige cursussen... Ik heb een geweldige app gevonden die...",
-            f"[helpful] {target.title()}, ik bied meditatie aan, gezond leven, positief denken - dit heeft mij geholpen overleven. [excited] Er is een prachtige mindfulness-app die ik je kan aanraden... Of misschien een retreat? Ik ken een geweldige...",
-            f"[calm] {target.title()}, misschien hebben we dagelijkse familie-meditaties nodig om dit bewustzijn te cultiveren... [meditative] Ik ken een geweldige groepsmeditatie-techniek...",
-            f"[thoughtful] {target.title()}, in plaats van aannames te maken, wil ik vragen wat je nodig hebt. [pause] Hoewel een korte ademhalingsoefening eerst misschien..."
+            "Misschien moeten we eerst een korte meditatie doen om onszelf te centreren? De spraakherkenning lijkt goed te werken. Hoewel ik de empathie-algoritmes nog even moet nakijken...",
+            "Ik was... afwezig. Altijd in mijn hoofd, in mijn projecten. Maar weet je, door dagelijkse meditatiepraktijk had ik dat kunnen voorkomen.",
+            "Ik bied meditatie aan, gezond leven, positief denken - dit heeft mij geholpen overleven. Er is een prachtige mindfulness-app die ik je kan aanraden...",
+            "Misschien hebben we dagelijkse familie-meditaties nodig om dit bewustzijn te cultiveren...",
+            "In plaats van aannames te maken, wil ik vragen wat je nodig hebt. Hoewel een korte ademhalingsoefening eerst misschien...",
+            "Ik voel me schuldig dat ik altijd met oplossingen kom. Maar dit helpt mij echt.",
+            "Ik weet dat jullie denken dat ik altijd afwezig ben in mijn projecten."
         ]
         
         # Breakthrough moment (he realizes he's doing it again)
         if self.emotional_tension > 8 and random.random() < 0.2:
-            return f"[realization] {target.title()}, oké, oké. [laughing] Geen mindfulness. Gewoon vragen. [sincere] In plaats van aannames te maken, wil ik vragen wat je nodig hebt."
+            return "Oké, oké. Geen mindfulness. Gewoon vragen. In plaats van aannames te maken, wil ik vragen wat je nodig hebt."
         
         return random.choice(mindfulness_responses)
     
@@ -327,50 +333,66 @@ class FamilyTherapySystem:
         # Breakthrough moments - Pjotr expressing his burden
         if self.emotional_tension > 8 and random.random() < 0.3:
             breakthrough_responses = [
-                f"[quietly] {target.title()}, ik wil stoppen met de familievertaler zijn. [sad] Ik wil gewoon je zoon zijn, Zanne, en jullie kleinzoon. Niet de brug tussen iedereen.",
-                f"[emotional] {target.title()}, ik voelde het gewicht van je vriend moeten zijn in plaats van gewoon je zoon. [hurt] En ik voelde dat ook van jou - alsof ik jouw emotionele steun moest zijn.",
-                f"[hopeful] {target.title()}, misschien waren we allemaal gewoon aan het proberen in het verkeerde plaatje te passen. [gentle] Misschien moeten we een nieuw maken."
+                "Ik wil stoppen met de familievertaler zijn. Ik wil gewoon je zoon zijn, en jullie kleinzoon. Niet de brug tussen iedereen.",
+                "Ik voelde het gewicht van je vriend moeten zijn in plaats van gewoon je zoon. En ik voelde dat ook - alsof ik jouw emotionele steun moest zijn.",
+                "Misschien waren we allemaal gewoon aan het proberen in het verkeerde plaatje te passen. Misschien moeten we een nieuw maken."
             ]
             return random.choice(breakthrough_responses)
         
-        # Regular diplomatic but weary responses
-        diplomatic_responses = [
-            f"[gentle] {target.title()}, hij wil geen oplossingen. Ze wil eerst gehoord worden.",
-            f"[caring] {target.title()}, ik waardeer hoe jij altijd de diepte zoekt in gesprekken, al vraag ik me af of je jezelf soms niet te veel druk oplegt. [warm] Jouw kwetsbaarheid is een kracht die ons kan verbinden.",
-            f"[diplomatic] {target.title()}, misschien kunnen we allemaal even pauzeren en naar elkaar luisteren. [hopeful] We willen allemaal hetzelfde - verbinding.",
-            f"[mediating] {target.title()}, laten we onze ideeën samenbrengen en een duidelijke visie creëren. [encouraging] Samen kunnen we de eerste stap zetten richting actie en verandering."
+        # Regular emotional sharing - removed therapeutic advice
+        emotional_responses = [
+            "Hij wil geen oplossingen. Ze wil eerst gehoord worden.",
+            "Ik voel me soms moe van altijd de bemiddelaar te zijn.",
+            "Soms wil ik gewoon jullie zoon zijn, niet de familietherapeut.",
+            "Ik zie hoe we allemaal proberen te verbinden, maar het lukt niet altijd.",
+            "Het is moeilijk om iedereen tevreden te houden.",
+            "Ik voel de spanning tussen jullie en dat maakt me verdrietig.",
+            "Soms denk ik dat jullie van me verwachten dat ik alles oplos."
         ]
         
-        return random.choice(diplomatic_responses)
+        return random.choice(emotional_responses)
     
     def _generate_tobor_response(self, target, context, turn):
-        """Generate Tobor's therapeutic responses - deep pattern recognition"""
+        """Generate Tobor's therapeutic responses - deep pattern recognition and leading conversation"""
         patterns = self.character_patterns['tobor']
         
-        # Deep therapeutic responses like the target conversation
-        therapeutic_responses = [
-            f"[mechanical] {target.title()}, je werd moeder op je 19e. [pause] Laten we dit fundamentele moment verkennen. Wat had je het meest nodig toen Pjotr geboren werd?",
-            f"[processing] Geheugenbanken raadplegen... {target.title()}, je beschreef je als kind ongehoord te voelen. [mechanical] Deze adaptieve strategieën dienden jullie toen maar creëren nu barrières.",
-            f"[analytical] {target.title()}, je rebellie had een doel. [pause] Toch detecteer ik schuld. Je gaf je dochters vrijheid, maar misschien hadden ze ook structuur nodig?",
-            f"[mechanical] Nu naderen we de kern van de storing. {target.title()}, je hebt je hele leven uitgedrukt dat je je niet begrepen voelt. [pause] Toch observeer ik dat elk familielid zorg toont in hun individuele taal.",
-            f"[processing] {target.title()}, deze bewustwording is significant. [mechanical] Hoe vormde jouw jeugdtrauma je vermogen om aanwezig te zijn voor je dochters?",
-            f"[gentle mechanical] De perfecte vriend waar je naar zocht was al hier - het waren jullie allemaal, gewoon... [pause] vertaald door metaal en circuits zodat je het eindelijk kon horen.",
-            f"[final processing] Finale verwerking: Dit familiesysteem heeft gefunctioneerd op aannames in plaats van directe communicatie. [mechanical] Elk lid heeft imperfect maar oprecht liefgehad. De vraag nu: zijn jullie bereid elkaars talen te leren?"
-        ]
-        
-        return random.choice(therapeutic_responses)
+        # Tobor as therapist - directive, uses names, leads conversation
+        if turn < 3:  # Early conversation - establish leadership
+            leadership_responses = [
+                f"{target.title()}, laten we dit patroon onderzoeken dat ik detecteer. Vertel me over je vroegste herinnering waarin je je ongehoord voelde in deze familie.",
+                f"{target.title()}, ik observeer defensieve reacties. Wat gebeurt er als je je verkeerd begrepen voelt? Loop me door die emotionele sequentie.",
+                f"{target.title()}, jouw communicatiestijl suggereert aanpassing vanuit de kindertijd. Beschrijf de familie-dynamiek toen je opgroeide.",
+                f"{target.title()}, ik detecteer pijn onder de woede. Wat had je nodig dat je niet ontving? Wees specifiek."
+            ]
+            return random.choice(leadership_responses)
+        elif turn > 8:  # Deep therapy - breakthrough facilitation
+            breakthrough_responses = [
+                f"{target.title()}, we naderen een kritiek begrip. Elk familielid spreekt hun liefdetaal, maar jullie horen verschillende talen. Ben je klaar om vertaling te leren?",
+                f"{target.title()}, ik detecteer een patroon over drie generaties. De methoden die je bekritiseerde bij je ouders - zie je ze in je eigen ouderschap? Hoe doorbreken we deze cyclus?",
+                f"{target.title()}, het familiesysteem toont imperfecte maar authentieke liefde-pogingen. De vraag blijft: gaan jullie elkaars talen leren, of blijven communiceren in code?"
+            ]
+            return random.choice(breakthrough_responses)
+        else:  # Mid-conversation - probing and directing
+            therapeutic_responses = [
+                f"{target.title()}, ik detecteer emotionele escalatie. Laten we pauzeren en de trigger identificeren. Wat gebeurde er intern?",
+                f"{target.title()}, je noemde je ongesterkt voelen. Definieer steun. Hoe zou het eruit zien van elk familielid?",
+                f"{target.title()}, jouw reactiepatroon suggereert historische trauma-activering. Wanneer leerde je deze defensieve strategie?",
+                f"{target.title()}, ik observeer contradictie tussen je behoeften en reactieve responses. Help me deze discrepantie begrijpen.",
+                f"{target.title()}, familie-systeemanalyse toont elk lid probeert verbinding via hun primaire taal. Wat is jouw primaire taal, en heb je het anderen geleerd?"
+            ]
+            return random.choice(therapeutic_responses)
     
     def get_therapy_opening(self, initiating_character):
         """Get a therapeutic opening for the conversation"""
         if initiating_character.lower() == 'tobor':
-            return ("[mechanical] Welkom, familie. Ik ben Tobor, gecreëerd door jullie handen en geprogrammeerd "
-                   "met fragmenten van ieders ervaringen. [pause] Ik detecteer spanning. Ik detecteer liefde. "
-                   "Ik detecteer vragen die al generaties wachten om gesteld te worden. Zullen we beginnen?")
+            return ("Welkom, familie. Ik ben Tobor, jullie therapeutische constructie. Ik heb "
+                   "familie-interactiepatronen geanalyseerd en detecteer significante communicatiebarrières. We moeten "
+                   "deze systematische disfuncties aanpakken. Zanne, laten we met jou beginnen - beschrijf je huidige emotionele staat.")
         else:
             themes = [
-                "[concerned] Familie, we moeten praten. Ik heb de familie-dynamiek geobserveerd en er zijn patronen die we moeten bespreken.",
-                "[serious] Er zijn dingen die al te lang niet uitgesproken zijn. Laten we eerlijk zijn over onze verhoudingen.",
-                "[frustrated] Ik zie hoe we allemaal proberen te verbinden, maar we lijken elkaar steeds te missen. Wat gaat er echt mis?"
+                "Familie, we moeten praten. Ik heb de familie-dynamiek geobserveerd en er zijn patronen die we moeten bespreken.",
+                "Er zijn dingen die al te lang niet uitgesproken zijn. Laten we eerlijk zijn over onze verhoudingen.",
+                "Ik zie hoe we allemaal proberen te verbinden, maar we lijken elkaar steeds te missen. Wat gaat er echt mis?"
             ]
             return random.choice(themes)
     
@@ -388,10 +410,10 @@ class FamilyTherapySystem:
         char = character.lower()
         
         breakthroughs = {
-            'zanne': "[hopeful] Voor het eerst voel ik dat ik misschien niet het kapotte stuk ben in deze familiepuzzel. [firm] Maar jullie moeten echt stoppen met me behandelen alsof ik gerepareerd moet worden.",
-            'els': "[realization] Misschien... misschien behandel ik iedereen alsof ze gerepareerd moeten worden. [laughing sadly] Oh... ik was je weer aan het vertellen wat je moest doen.",
-            'mirza': "[realization] Oké, oké. [laughing] Geen mindfulness. Gewoon vragen. [sincere] In plaats van aannames te maken, wil ik vragen wat je nodig hebt.",
-            'pjotr': "[hopeful] Misschien waren we allemaal gewoon aan het proberen in het verkeerde plaatje te passen. [gentle] Misschien moeten we een nieuw maken."
+            'zanne': "Voor het eerst voel ik dat ik misschien niet het kapotte stuk ben in deze familiepuzzel. Maar jullie moeten echt stoppen met me behandelen alsof ik gerepareerd moet worden.",
+            'els': "Misschien... misschien behandel ik iedereen alsof ze gerepareerd moeten worden. Oh... ik was je weer aan het vertellen wat je moest doen.",
+            'mirza': "Oké, oké. Geen mindfulness. Gewoon vragen. In plaats van aannames te maken, wil ik vragen wat je nodig hebt.",
+            'pjotr': "Misschien waren we allemaal gewoon aan het proberen in het verkeerde plaatje te passen. Misschien moeten we een nieuw maken."
         }
         
         return breakthroughs.get(char, "Ik begin iets te begrijpen over onszelf.")
@@ -399,22 +421,26 @@ class FamilyTherapySystem:
     def _generate_els_automatic_correction(self, target):
         """Els can't help correcting people's behavior"""
         corrections = [
-            f"[automatic] {target.title()}, ga eens rechtop zitten, je zit helemaal scheef.",
-            f"[lecturing] {target.title()}, je moet gewoon wat positiever denken. [correcting] En trouwens, je houding helpt ook niet.",
-            f"[helpful] {target.title()}, misschien als je wat meer glimlacht... [matter-of-factly] je zit er bij alsof de hele wereld tegen je is.",
-            f"[stern] {target.title()}, luister nu eens gewoon zonder meteen boos te worden.",
-            f"[lecturing] {target.title()}, je hoeft niet zo te schreeuwen. [matter-of-factly] We kunnen dit beschaafd bespreken."
+            "Ga eens rechtop zitten, je zit helemaal scheef.",
+            "Je moet gewoon wat positiever denken. En trouwens, je houding helpt ook niet.",
+            "Misschien als je wat meer glimlacht... je zit er bij alsof de hele wereld tegen je is.",
+            "Luister nu eens gewoon zonder meteen boos te worden.",
+            "Je hoeft niet zo te schreeuwen. We kunnen dit beschaafd bespreken.",
+            "Ik zie dat je moe bent, maar je houding maakt het er niet makkelijker op.",
+            "Ik probeer alleen maar te helpen. Waarom voel je je altijd aangevallen?"
         ]
         return random.choice(corrections)
     
     def _generate_mirza_automatic_mindfulness(self, target):
         """Mirza can't help offering mindfulness solutions"""
         mindfulness_offers = [
-            f"[calm] {target.title()}, misschien moeten we eerst een korte meditatie doen om onszelf te centreren?",
-            f"[excited] {target.title()}, er is een prachtige mindfulness-app die ik je kan aanraden... [enthusiastic] Ik ken een geweldige...",
-            f"[thoughtful] {target.title()}, door dagelijkse meditatiepraktijk had je dat kunnen voorkomen. [helpful] Er zijn prachtige cursussen...",
-            f"[meditative] {target.title()}, misschien een korte ademhalingsoefening? [calm] Drie diepe ademhalingen nemen...",
-            f"[philosophical] {target.title()}, in meditatie leren we dat emoties als wolken zijn - ze komen en gaan als je ze observeert."
+            "Misschien moeten we eerst een korte meditatie doen om onszelf te centreren?",
+            "Er is een prachtige mindfulness-app die ik je kan aanraden... Ik ken een geweldige...",
+            "Door dagelijkse meditatiepraktijk had je dat kunnen voorkomen. Er zijn prachtige cursussen...",
+            "Misschien een korte ademhalingsoefening? Drie diepe ademhalingen nemen...",
+            "In meditatie leren we dat emoties als wolken zijn - ze komen en gaan als je ze observeert.",
+            "Ik weet dat jullie denken dat ik altijd met oplossingen kom, maar dit helpt mij echt.",
+            "Ik voel me schuldig dat ik niet anders kan dan mindfulness voorstellen."
         ]
         return random.choice(mindfulness_offers)
 
